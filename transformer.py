@@ -6,13 +6,9 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, '../utils'))
-sys.path.append(os.path.join(BASE_DIR, '../../utils'))
 import tf_util
-from pointnet_util import input_transform_net, pointnet_fp_module, sample_and_group
+from pointnet_util import  pointnet_fp_module, sample_and_group
 
-
-from tf_sampling import farthest_point_sample, gather_point
-from tf_grouping import knn_point, group_point
 
 def placeholder_inputs(batch_size, num_point):
   pointclouds_pl = tf.placeholder(tf.float32, shape=(batch_size, num_point, 3))
@@ -196,20 +192,6 @@ def get_loss(pred, label, end_points):
 
 
 if __name__=='__main__':
-  batch_size = 2
-  num_pt = 124
-  pos_dim = 3
-
-  input_feed = np.random.rand(batch_size, num_pt, pos_dim)
-  label_feed = np.random.rand(batch_size)
-  label_feed[label_feed>=0.5] = 1
-  label_feed[label_feed<0.5] = 0
-  label_feed = label_feed.astype(np.int32)
-
-  # # np.save('./debug/input_feed.npy', input_feed)
-  # input_feed = np.load('./debug/input_feed.npy')
-  # print input_feed
-
   with tf.Graph().as_default():
     input_pl, label_pl = placeholder_inputs(batch_size, num_pt)
     pos, ftr = get_model(input_pl, tf.constant(True))
