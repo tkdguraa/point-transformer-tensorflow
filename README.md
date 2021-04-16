@@ -8,6 +8,7 @@ Thank you :)
 | | OA | mAcc |
 | ------ | ------ |
 | Paper | 93.7 | 90.6 |
+| ------ | ------ |
 | Ours | 92.0 | 89.5 |
 
 Paper: https://arxiv.org/abs/2012.09164  
