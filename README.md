@@ -5,7 +5,7 @@ Please let me know if there's anything wrong.
 Thank you :) 
 
 ##Implementation Results  
-| | OA | mAcc |
+|  | OA | mAcc |
 | ------ | ------ |
 | Paper | 93.7 | 90.6 |
 | ------ | ------ |
