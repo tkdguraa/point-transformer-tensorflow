@@ -49,7 +49,6 @@ def transformer(net_late, xyz, pos_enc, gb_points, npoint, num, dim, is_training
   feature1 = net_late
   feature1 = tf.expand_dims(feature1, 2)
   last_dim = feature1.shape[-1]
-  print("gb_", feature1.shape)  
   nsample = feature1.shape[-2]
 
   pos_enc = tf_util.conv2d(pos_enc, dim/2, [1, 1],
@@ -61,17 +60,6 @@ def transformer(net_late, xyz, pos_enc, gb_points, npoint, num, dim, is_training
                        bn=True, is_training=is_training,
                        scope='beta%d_%d'%(npoint,num), bn_decay=bn_decay, activation_fn=None, is_bias = False)
 
-  #pos_enc = tf_util.conv2d(pos_enc, dim, [1, 1],
-  #                     padding='VALID', stride=[1, 1],
-  #                     bn=True, is_training=is_training,
-  #                     scope='pos_mlp2_%d_%d'%(npoint,num), bn_decay=bn_decay)
-
-
-  #feature1 = tf_util.conv2d(net, dim/2, [1, 1],
-  #                     padding='VALID', stride=[1, 1],
-  #                     bn=True, is_training=is_training,
-  #                     scope='mlp1_%d_%d'%(npoint,num), activation_fn=None, is_bias=False,bn_decay=bn_decay)
-
 
   phi = tf_util.conv2d(feature1, dim, [1, 1],
                        padding='VALID', stride=[1, 1],
@@ -81,12 +69,10 @@ def transformer(net_late, xyz, pos_enc, gb_points, npoint, num, dim, is_training
   print(xyz.shape, phi.shape, feature1.shape)
   _, phi, _, _ = sample_and_group(feature1.shape[1], 0, 16, xyz, tf.squeeze(phi))
 
-  #gb_points = tf.tile(gb_points, [1,1,nsample,1])
   b_phi = tf_util.conv2d(feature1, dim, [1, 1],
                        padding='VALID', stride=[1, 1],
                        bn=True, is_training=is_training,
                        scope='b_phi_%d_%d'%(npoint,num), activation_fn=None, is_bias=False,bn_decay=bn_decay)
-  #b_phi = tf.tile(b_phi, [1,1,nsample,1])
   _, b_phi, _, _ = sample_and_group(feature1.shape[1], 0, 16, xyz, tf.squeeze(b_phi))
 
 
@@ -161,7 +147,6 @@ def get_model(point_cloud, is_training, bn_decay=None):
                        padding='VALID', stride=[1, 1],
                        bn=True, is_training=is_training,
                        scope='mlp1',bn_decay=bn_decay)
-  #mlp
  
   net = tf.squeeze(net)  
   net = transformer_block(net, xyz, num_points, 0, 32, is_training, bn_decay)
@@ -217,9 +202,6 @@ if __name__=='__main__':
   label_feed[label_feed<0.5] = 0
   label_feed = label_feed.astype(np.int32)
 
-  # # np.save('./debug/input_feed.npy', input_feed)
-  # input_feed = np.load('./debug/input_feed.npy')
-  # print input_feed
 
   with tf.Graph().as_default():
     input_pl, label_pl = placeholder_inputs(batch_size, num_pt)
